@@ -1,0 +1,20 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../out-tsc/spec",
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "types": [
+      "jest",
+      "node",
+      "web-bluetooth"
+    ]
+  },
+  "files": [
+    "test-setup.ts"
+  ],
+  "include": [
+    "**/*.spec.ts",
+    "**/*.d.ts"
+  ]
+}
