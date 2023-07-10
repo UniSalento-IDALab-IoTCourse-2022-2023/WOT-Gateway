@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  # app
+  gateway:
+    platform: linux/x86_64
+    image: eclipse-temurin:19-jdk
+    container_name: gateway
+    ports:
+      - 8080:8080
+      - 8000:8000
+    expose:
+      - "8000"
+    depends_on:
+      - mongodb_gateway
+    volumes:
+      - ./build/libs/Gateway-0.0.1-SNAPSHOT.jar:/app/app.jar
+    working_dir: /app
+    entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
+
+  # mongodb
+  mongodb_gateway:
+    image: mongo:5.0
+    container_name: mongodb_gateway
+    ports:
+      - 27017:27017
