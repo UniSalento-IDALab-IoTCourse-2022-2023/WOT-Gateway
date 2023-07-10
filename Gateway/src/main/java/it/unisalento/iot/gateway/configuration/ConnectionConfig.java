@@ -1,5 +1,7 @@
 package it.unisalento.iot.gateway.configuration;
 
+import it.unisalento.iot.gateway.domains.CarbonMonoxideRawData;
+import it.unisalento.iot.gateway.domains.PerformanceRawData;
 import it.unisalento.iot.gateway.exceptions.CannotSendRequestException;
 import it.unisalento.iot.gateway.repositories.ICarbonMonoxideRepository;
 import it.unisalento.iot.gateway.repositories.IPerformanceRepository;
@@ -9,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Scanner;
+import java.util.Date;
 
 /**
  * classe per la configurazione della connessione tra il gateway ed il BE in Cloud
@@ -47,16 +49,25 @@ public class ConnectionConfig {
 
   @Bean
   public void inputCli() throws CannotSendRequestException, InterruptedException {
-//    PerformanceRawData performanceRawData = new PerformanceRawData();
-//    performanceRawData.setDate(new Date());
-//    performanceRawData.setPerformanceRawData(12.3f);
-//    performanceRepository.save(performanceRawData);
-//
-//    CarbonMonoxideRawData carbonMonoxideRawData = new CarbonMonoxideRawData();
-//    carbonMonoxideRawData.setDate(new Date());
-//    carbonMonoxideRawData.setCarbonMonoxideRawData(45.6f);
-//    carbonMonoxideRepository.save(carbonMonoxideRawData);
 
-    boilerService.sendBoilerData();
+    while(true){
+      System.out.println("--------: Sleep di 10 sec");
+      for (int i = 0; i < 10; i++) {
+        System.out.println(i+1);
+        Thread.sleep(1000);
+      }
+
+      PerformanceRawData performanceRawData = new PerformanceRawData();
+      performanceRawData.setDate(new Date());
+      performanceRawData.setPerformanceRawData(12.3f);
+      performanceRepository.save(performanceRawData);
+
+      CarbonMonoxideRawData carbonMonoxideRawData = new CarbonMonoxideRawData();
+      carbonMonoxideRawData.setDate(new Date());
+      carbonMonoxideRawData.setCarbonMonoxideRawData(45.6f);
+      carbonMonoxideRepository.save(carbonMonoxideRawData);
+
+      boilerService.sendBoilerData();
+    }
   }
 }

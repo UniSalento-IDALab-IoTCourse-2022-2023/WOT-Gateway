@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -34,10 +33,8 @@ public class AggregatedDataService implements IAggregatedDataServiceImpl {
   public AggregatedData createAggregatedData() {
     AggregatedData newAggregatedData = new AggregatedData();
 
-    Scanner in = new Scanner(System.in);
     System.out.println("Inserire l'id del boiler: ");
     newAggregatedData.setBoilerId("64ab11356623471faa234a7a");
-//    newAggregatedData.setBoilerId(in.nextLine());
 
     // prendo i dati raw dal db
     List<PerformanceRawData> performanceRawDataList = performanceRepository.findAll();

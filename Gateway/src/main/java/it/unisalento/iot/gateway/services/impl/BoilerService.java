@@ -27,7 +27,7 @@ public class BoilerService implements IBoilerServiceImpl {
   public static float CO_TOP_RANGE = 10000;
 
   static final String routingKey = "gateway.boilerData.#";
-  static final String wasteTopic = "boilerData-topic";
+  static final String boilerDataTopic = "boilerData-topic";
   static final String alarmTopic = "alarm-topic";
   static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
@@ -50,7 +50,7 @@ public class BoilerService implements IBoilerServiceImpl {
     aggregatedDataString += "\"performanceAverageData\":\"" + aggregatedData.getPerformanceAverageData() + "\",";
 
     // "CoAverageData":"..."
-    aggregatedDataString += "\"CoAverageData\":\"" + aggregatedData.getCoAverageData() + "\",";
+    aggregatedDataString += "\"CoAverageData\":\"" + aggregatedData.getCoAverageData() + "\"";
 
     // end
     aggregatedDataString += "}";
@@ -69,7 +69,7 @@ public class BoilerService implements IBoilerServiceImpl {
 //      }
 
       // invio della richesta
-      rabbitTemplate.convertAndSend(wasteTopic, routingKey, aggregatedDataString);
+      rabbitTemplate.convertAndSend(boilerDataTopic, routingKey, aggregatedDataString);
 
     } catch (Exception e) {
       e.printStackTrace();

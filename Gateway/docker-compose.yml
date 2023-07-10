@@ -17,6 +17,8 @@ services:
       - ./build/libs/Gateway-0.0.1-SNAPSHOT.jar:/app/app.jar
     working_dir: /app
     entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
+    networks:
+      monitoring-be_monitoringbe_net:
 
   # mongodb
   mongodb_gateway:
@@ -24,3 +26,9 @@ services:
     container_name: mongodb_gateway
     ports:
       - 27017:27017
+    networks:
+      monitoring-be_monitoringbe_net:
+
+networks:
+  monitoring-be_monitoringbe_net:
+    external: true
