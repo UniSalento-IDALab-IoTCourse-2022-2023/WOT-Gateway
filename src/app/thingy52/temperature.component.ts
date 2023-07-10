@@ -54,12 +54,7 @@ export class TemperatureComponent implements OnInit, OnDestroy {
     service.config({
       decoder: (value: DataView) => value.getInt16(0, true),
       characteristic: 'temperature',
-      service: 'environmental_sensing',
-      // decoder: (value: DataView) => {
-      //   const integer = value.getInt8(0);
-      //   const decimal = value.getUint8(1);
-      //   return integer + decimal / 100;
-      // }
+      service: 'user_data',
     });
 
   }

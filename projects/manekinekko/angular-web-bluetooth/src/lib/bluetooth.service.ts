@@ -64,6 +64,7 @@ export class BluetoothCore {
     try {
       const device = await this.discover({
         acceptAllDevices: options.acceptAllDevices,
+        // filters: [{ name: options.deviceName }],
         optionalServices: options.optionalServices
       }) as BluetoothDevice;
       this.console.log('[BLE::Info] Device info %o', device);

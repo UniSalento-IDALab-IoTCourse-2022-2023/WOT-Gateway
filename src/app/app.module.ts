@@ -22,17 +22,21 @@ import { TemperatureComponent } from './thingy52/temperature.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { TempComponent } from './raspberry/temp/temp.component';
 import { PressureComponent } from './thingy52/pressure.component';
+import { YieldComponent } from './thingy52/yield.component';
+import { CarbonComponent } from './thingy52/carbon.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BatteryLevelComponent,
     TemperatureComponent,
+    YieldComponent,
     HumidityComponent,
     PressureComponent,
     StepCounterComponent,
     DashboardComponent,
-    TempComponent
+    TempComponent,
+    CarbonComponent
   ],
   imports: [
     BrowserModule,

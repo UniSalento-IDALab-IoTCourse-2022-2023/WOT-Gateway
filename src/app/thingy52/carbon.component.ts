@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BluetoothCore, BrowserWebBluetooth, ConsoleLoggerService } from '@manekinekko/angular-web-bluetooth';
-import { of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { SmoothieChart, TimeSeries } from 'smoothie';
 import { BleService } from '../ble.service';
 
@@ -21,9 +21,9 @@ const PROVIDERS = [{
 }];
 
 @Component({
-  selector: 'ble-humidity',
+  selector: 'ble-carbon',
   template: `
-    <canvas #chart width="549" height="200"></canvas>
+    <canvas #chart width="549" height="180"></canvas>
   `,
   styles: [`
   :host {
@@ -34,7 +34,8 @@ const PROVIDERS = [{
   }`],
   providers: PROVIDERS
 })
-export class HumidityComponent implements OnInit, OnDestroy {
+export class CarbonComponent implements OnInit, OnDestroy {
+  isAlert: boolean = false;
   series: TimeSeries;
   chart: SmoothieChart;
   valuesSubscription: Subscription;
@@ -52,10 +53,11 @@ export class HumidityComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar) {
 
     service.config({
-      decoder: (value: DataView) => value.getUint16(0, true),
-      characteristic: 'humidity',
+      decoder: (value: DataView) => value.getInt16(0, true),
+      characteristic: 'aef11e21-00c2-4a5c-8aa9-c2e8d7d8034b',
       service: 'user_data',
     });
+
   }
 
   ngOnInit() {
@@ -63,7 +65,9 @@ export class HumidityComponent implements OnInit, OnDestroy {
 
     this.streamSubscription = this.service.stream()
       .subscribe({
-        next: (val: number) => this.updateValue(val),
+        next: (val: number) => {
+          this.updateValue(val);
+        },
         error: (err) => this.hasError(err)
       });
   }
@@ -71,8 +75,19 @@ export class HumidityComponent implements OnInit, OnDestroy {
   initChart() {
     this.series = new window.TimeSeries() as TimeSeries;
     const canvas = this.chartRef.nativeElement;
-    // tslint:disable-next-line: max-line-length
-    this.chart = new window.SmoothieChart({ interpolation: 'step', grid: { fillStyle: '#ffffff', strokeStyle: 'rgba(119,119,119,0.18)', borderVisible: false }, labels: { fillStyle: '#000000', fontSize: 17 }, tooltip: true });
+    this.chart = new window.SmoothieChart({
+      interpolation: 'step',
+      grid: {
+        fillStyle: '#ffffff',
+        strokeStyle: 'rgba(119,119,119,0.18)',
+        borderVisible: false
+      },
+      labels: {
+        fillStyle: '#000000',
+        fontSize: 17
+      },
+      tooltip: true
+    });
     this.chart.addTimeSeries(this.series, { lineWidth: 1, strokeStyle: '#ff0000', fillStyle: 'rgba(255,161,161,0.30)' });
     this.chart.streamTo(canvas);
     this.chart.stop();
@@ -80,19 +95,15 @@ export class HumidityComponent implements OnInit, OnDestroy {
 
   requestValue() {
     this.valuesSubscription = this.service.value()
-      .subscribe(
-        () => null,
-        () => of(this.hasError.bind(this)),
-      );
+      .subscribe(() => null, error => this.hasError.bind(this));
   }
-
 
   updateValue(value: number) {
-    console.log('Reading humidity %d', value);
+    console.log('Reading carbon %d', value);
     this.series.append(Date.now(), value);
     this.chart.start();
+    this.isAlert = this.checkForAlert(value);
   }
-
 
   disconnect() {
     this.service.disconnectDevice();
@@ -109,4 +120,10 @@ export class HumidityComponent implements OnInit, OnDestroy {
     this.valuesSubscription.unsubscribe();
     this.streamSubscription.unsubscribe();
   }
+
+  checkForAlert(value: number): boolean {
+    return value > 10000;
+  }
 }
+
+

@@ -908,7 +908,7 @@ export class TemperatureComponent implements OnInit, OnDestroy {
     service.config({
       decoder: (value: DataView) &#x3D;&gt; value.getInt16(0, true),
       characteristic: &#x27;temperature&#x27;,
-      service: &#x27;environmental_sensing&#x27;,
+      service: &#x27;user_data&#x27;,
       // decoder: (value: DataView) &#x3D;&gt; {
       //   const integer &#x3D; value.getInt8(0);
       //   const decimal &#x3D; value.getUint8(1);

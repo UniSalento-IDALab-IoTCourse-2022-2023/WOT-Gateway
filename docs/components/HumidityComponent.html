@@ -908,7 +908,7 @@ export class HumidityComponent implements OnInit, OnDestroy {
     service.config({
       decoder: (value: DataView) &#x3D;&gt; value.getUint16(0, true),
       characteristic: &#x27;humidity&#x27;,
-      service: &#x27;environmental_sensing&#x27;,
+      service: &#x27;user_data&#x27;,
     });
   }
 

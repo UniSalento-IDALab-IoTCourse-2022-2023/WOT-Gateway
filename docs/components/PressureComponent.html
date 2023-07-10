@@ -908,7 +908,7 @@ export class PressureComponent implements OnInit, OnDestroy {
     service.config({
       decoder: (value: DataView) &#x3D;&gt; value.getUint32(0,true),
       characteristic: &#x27;pressure&#x27;,
-      service: &#x27;environmental_sensing&#x27;,
+      service: &#x27;user_data&#x27;,
     });
   }
 
