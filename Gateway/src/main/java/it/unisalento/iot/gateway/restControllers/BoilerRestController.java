@@ -2,7 +2,9 @@ package it.unisalento.iot.gateway.restControllers;
 
 import it.unisalento.iot.gateway.domains.RawData;
 import it.unisalento.iot.gateway.dto.RawDataDTO;
+import it.unisalento.iot.gateway.exceptions.CannotSendRequestException;
 import it.unisalento.iot.gateway.repositories.IRawDataRepository;
+import it.unisalento.iot.gateway.services.impl.BoilerService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,8 @@ public class BoilerRestController {
     IRawDataRepository rawDataRepository;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    BoilerService boilerService;
 
     /**
      * metodo per salvare i dati del boiler
@@ -33,7 +37,17 @@ public class BoilerRestController {
       RawData saved = rawDataRepository.save(rawData);
       rawDataDTO.setId(saved.getId());
 
-        return new ResponseEntity<>(rawDataDTO, HttpStatus.ACCEPTED);
+      return new ResponseEntity<>(rawDataDTO, HttpStatus.ACCEPTED);
+    }
+
+    /**
+     * effettua l'aggregazione dei dati
+     * @return LISTA DTO CON HTTP_STATUS OK
+     */
+    @GetMapping(value = "/aggregateData")
+    public void aggregateData() throws CannotSendRequestException {
+
+      boilerService.sendBoilerData();
     }
 
     // MODEL MAPPER:
