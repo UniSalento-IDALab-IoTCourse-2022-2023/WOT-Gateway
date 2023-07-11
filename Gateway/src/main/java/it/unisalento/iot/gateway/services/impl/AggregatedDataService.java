@@ -4,10 +4,8 @@ import it.unisalento.iot.gateway.domains.AggregatedData;
 import it.unisalento.iot.gateway.domains.RawData;
 import it.unisalento.iot.gateway.iservices.IAggregatedDataServiceImpl;
 import it.unisalento.iot.gateway.repositories.IAggregatedDataRepository;
-import it.unisalento.iot.gateway.repositories.IRawDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class AggregatedDataService implements IAggregatedDataServiceImpl {
   IAggregatedDataRepository aggregatedDataRepository;
 
   @Override
-  public AggregatedData createAggregatedData(List<RawData> rawDataList ) {
+  public AggregatedData createAggregatedData(List<RawData> rawDataList) {
     AggregatedData newAggregatedData = new AggregatedData();
 
     newAggregatedData.setBoilerId("64ab11356623471faa234a7a");
