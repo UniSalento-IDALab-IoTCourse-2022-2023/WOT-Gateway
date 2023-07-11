@@ -10,13 +10,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.io.Serializable;
 import java.util.Date;
 
-@Document("carbonMonoxideRawData")
+@Document("rawData")
 @Getter
 @Setter
 @NoArgsConstructor
-public class CarbonMonoxideRawData implements Serializable {
+public class RawData implements Serializable {
 
   @Id private String id;
   @CreatedDate private Date date;
-  private float CarbonMonoxideRawData;
+  private float temperatureRawData;
+  private float pressureRawData;
+  private float carbonMonoxideRawData;
+  private float performanceRawData;
+  private int stateRawData;
 }

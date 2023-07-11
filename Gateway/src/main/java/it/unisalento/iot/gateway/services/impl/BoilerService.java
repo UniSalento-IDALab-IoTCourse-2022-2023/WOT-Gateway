@@ -1,16 +1,20 @@
 package it.unisalento.iot.gateway.services.impl;
 
 import it.unisalento.iot.gateway.domains.AggregatedData;
+import it.unisalento.iot.gateway.domains.AlarmType;
+import it.unisalento.iot.gateway.domains.RawData;
 import it.unisalento.iot.gateway.exceptions.CannotSendRequestException;
 import it.unisalento.iot.gateway.iservices.IAggregatedDataServiceImpl;
 import it.unisalento.iot.gateway.iservices.IBoilerServiceImpl;
+import it.unisalento.iot.gateway.repositories.IRawDataRepository;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Scanner;
+import java.util.List;
 
 /**
  * classe per specificare i servizi del boiler
@@ -22,9 +26,17 @@ public class BoilerService implements IBoilerServiceImpl {
   RabbitTemplate rabbitTemplate;
   @Autowired
   IAggregatedDataServiceImpl aggregatedDataService;
+  @Autowired
+  private MongoTemplate mongoTemplate;
+  @Autowired
+  IRawDataRepository rawDataRepository;
 
-  public static float PERFORMANCE_TOP_RANGE = 50;
-  public static float CO_TOP_RANGE = 10000;
+  public static int PERFORMANCE_TOP_RANGE = 90;
+  public static int EMISSIONS_TOP_RANGE = 10000;
+  public static int LOW_WATER_PRESS_VALUE = 2;
+  public static int GAS_FLAME_FAULT_VALUE = 3;
+  public static int AIR_PRESS_FAULT_VALUE = 4;
+  public static int WATER_OVERTEMP_VALUE = 5;
 
   static final String routingKey = "gateway.boilerData.#";
   static final String boilerDataTopic = "boilerData-topic";
@@ -34,8 +46,11 @@ public class BoilerService implements IBoilerServiceImpl {
   @Override
   public void sendBoilerData() throws CannotSendRequestException {
 
+    // prendo i dati raw dal db
+    List<RawData> rawDataList = rawDataRepository.findAll();
+
     // creazione dei dati aggregati
-    AggregatedData aggregatedData = aggregatedDataService.createAggregatedData();
+    AggregatedData aggregatedData = aggregatedDataService.createAggregatedData(rawDataList);
 
     // creazione del json
     String aggregatedDataString = "{";
@@ -46,27 +61,49 @@ public class BoilerService implements IBoilerServiceImpl {
     // "boilerId":"..."
     aggregatedDataString += "\"boilerId\":\"" + aggregatedData.getBoilerId() + "\",";
 
-    // "performanceAverageData":"..."
-    aggregatedDataString += "\"performanceAverageData\":\"" + aggregatedData.getPerformanceAverageData() + "\",";
+    // "temperatureAverageData":"..."
+    aggregatedDataString += "\"temperatureAverageData\":\"" + aggregatedData.getTemperatureAverageData() + "\",";
 
-    // "CoAverageData":"..."
-    aggregatedDataString += "\"CoAverageData\":\"" + aggregatedData.getCoAverageData() + "\"";
+    // "pressureAverageData":"..."
+    aggregatedDataString += "\"pressureAverageData\":\"" + aggregatedData.getPressureAverageData() + "\",";
+
+    // "carbonMonoxideAverageData":"..."
+    aggregatedDataString += "\"carbonMonoxideAverageData\":\"" + aggregatedData.getCarbonMonoxideAverageData() + "\",";
+
+    // "performanceAverageData":"..."
+    aggregatedDataString += "\"performanceAverageData\":\"" + aggregatedData.getPerformanceAverageData() + "\"";
 
     // end
     aggregatedDataString += "}";
 
     System.out.println("\nSending aggregated data...");
 
+    // check degli alarms
     try {
-      // check del livello delle performance
-      if (aggregatedData.getPerformanceAverageData() >= PERFORMANCE_TOP_RANGE){
-        sendAlarm("PERFORMANCE", aggregatedData.getBoilerId());
-      } else if (aggregatedData.getCoAverageData() >= CO_TOP_RANGE) { // check del livello del monossido di carbonio
-        sendAlarm("EMISSIONS", aggregatedData.getBoilerId());
+      // check del livello del monossido di carbonio
+      if (aggregatedData.getCarbonMonoxideAverageData() > EMISSIONS_TOP_RANGE) {
+        sendAlarm(String.valueOf(AlarmType.EMISSIONS), aggregatedData.getBoilerId());
       }
-//      else if (...) { // check del ...
-//        sendAlarm("OPEN_THERM", aggregatedData.getBoilerId());
-//      }
+      // check del livello delle performance
+      if (aggregatedData.getPerformanceAverageData() < PERFORMANCE_TOP_RANGE){
+        sendAlarm(String.valueOf(AlarmType.PERFORMANCE), aggregatedData.getBoilerId());
+      }
+
+      for (RawData rawData : rawDataList){
+        switch (rawData.getStateRawData()) {
+          // check della pressione dell'acqua
+          case 2 -> sendAlarm(String.valueOf(AlarmType.LOW_WATER_PRESS), aggregatedData.getBoilerId());
+
+          // check del guasto del bruciatore
+          case 3 -> sendAlarm(String.valueOf(AlarmType.GAS_FLAME_FAULT), aggregatedData.getBoilerId());
+
+          // check del guasto della pressione dell'aria
+          case 4 -> sendAlarm(String.valueOf(AlarmType.AIR_PRESS_FAULT), aggregatedData.getBoilerId());
+
+          // check della temperatura dell'acqua
+          case 5 -> sendAlarm(String.valueOf(AlarmType.WATER_OVERTEMP), aggregatedData.getBoilerId());
+        }
+      }
 
       // invio della richesta
       rabbitTemplate.convertAndSend(boilerDataTopic, routingKey, aggregatedDataString);
@@ -75,6 +112,9 @@ public class BoilerService implements IBoilerServiceImpl {
       e.printStackTrace();
       throw new CannotSendRequestException();
     }
+
+    // delete dei dati raw usati
+    mongoTemplate.dropCollection("rawData");
 
     System.out.println("\n+---------------- - -  -  -   -\nAggregated data sent: " + aggregatedDataString + "\n+---------------- - -  -  -   -\n");
   }

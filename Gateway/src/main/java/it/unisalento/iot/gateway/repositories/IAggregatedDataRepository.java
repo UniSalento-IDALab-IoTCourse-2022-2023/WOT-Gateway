@@ -11,6 +11,8 @@ import java.util.List;
 public interface IAggregatedDataRepository extends MongoRepository<AggregatedData, String> {
 
     List<AggregatedData> findByBoilerId(String boilerId);
-    List<AggregatedData> findByPerformanceAverageData(float performanceAverageData);
-    List<AggregatedData> findByCoAverageData(float coAverageData);
+  List<AggregatedData> findByTemperatureAverageData(float temperatureAverageData);
+  List<AggregatedData> findByPressureAverageData(float pressureAverageData);
+  List<AggregatedData> findByCarbonMonoxideAverageData(float carbonMonoxideAverageData);
+  List<AggregatedData> findByPerformanceAverageData(float performanceAverageData);
 }

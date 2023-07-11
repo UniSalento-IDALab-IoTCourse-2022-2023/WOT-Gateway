@@ -16,6 +16,8 @@ public class AggregatedDataDTO {
   @Id private String id;
   @CreatedDate private Date date;
   private String boilerId;
+  private float temperatureAverageData;
+  private float pressureAverageData;
+  private float carbonMonoxideAverageData;
   private float performanceAverageData;
-  private float coAverageData;
 }

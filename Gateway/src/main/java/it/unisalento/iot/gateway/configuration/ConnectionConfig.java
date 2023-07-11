@@ -1,10 +1,6 @@
 package it.unisalento.iot.gateway.configuration;
 
-import it.unisalento.iot.gateway.domains.CarbonMonoxideRawData;
-import it.unisalento.iot.gateway.domains.PerformanceRawData;
 import it.unisalento.iot.gateway.exceptions.CannotSendRequestException;
-import it.unisalento.iot.gateway.repositories.ICarbonMonoxideRepository;
-import it.unisalento.iot.gateway.repositories.IPerformanceRepository;
 import it.unisalento.iot.gateway.services.impl.BoilerService;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +17,10 @@ public class ConnectionConfig {
 
   @Autowired
   BoilerService boilerService;
-  @Autowired
-  IPerformanceRepository performanceRepository;
-  @Autowired
-  ICarbonMonoxideRepository carbonMonoxideRepository;
 
   static final String boilerDataTopic = "boilerData-topic";
   static final String alarmTopic = "alarm-topic";
+  public static int SEC_SLEEPING_TIME = 10;
 
   /**
    * metodo che inizializza il topic boilerData
@@ -52,20 +45,10 @@ public class ConnectionConfig {
 
     while(true){
       System.out.println("--------: Sleep di 10 sec");
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < SEC_SLEEPING_TIME; i++) {
         System.out.println(i+1);
-        Thread.sleep(1000);
+        Thread.sleep(1000); // sleep di 1 sec
       }
-
-      PerformanceRawData performanceRawData = new PerformanceRawData();
-      performanceRawData.setDate(new Date());
-      performanceRawData.setPerformanceRawData(12.3f);
-      performanceRepository.save(performanceRawData);
-
-      CarbonMonoxideRawData carbonMonoxideRawData = new CarbonMonoxideRawData();
-      carbonMonoxideRawData.setDate(new Date());
-      carbonMonoxideRawData.setCarbonMonoxideRawData(45.6f);
-      carbonMonoxideRepository.save(carbonMonoxideRawData);
 
       boilerService.sendBoilerData();
     }
