@@ -33,10 +33,10 @@ public class BoilerService implements IBoilerServiceImpl {
 
   public static int PERFORMANCE_TOP_RANGE = 90;
   public static int EMISSIONS_TOP_RANGE = 10000;
-  public static int LOW_WATER_PRESS_VALUE = 2;
-  public static int GAS_FLAME_FAULT_VALUE = 3;
-  public static int AIR_PRESS_FAULT_VALUE = 4;
-  public static int WATER_OVERTEMP_VALUE = 5;
+  public static final int LOW_WATER_PRESS_VALUE = 2;
+  public static final int GAS_FLAME_FAULT_VALUE = 3;
+  public static final int AIR_PRESS_FAULT_VALUE = 4;
+  public static final int WATER_OVERTEMP_VALUE = 5;
 
   static final String routingKey = "gateway.boilerData.#";
   static final String boilerDataTopic = "boilerData-topic";
@@ -92,16 +92,16 @@ public class BoilerService implements IBoilerServiceImpl {
       for (RawData rawData : rawDataList){
         switch (rawData.getStateRawData()) {
           // check della pressione dell'acqua
-          case 2 -> sendAlarm(String.valueOf(AlarmType.LOW_WATER_PRESS), aggregatedData.getBoilerId());
+          case LOW_WATER_PRESS_VALUE -> sendAlarm(String.valueOf(AlarmType.LOW_WATER_PRESS), aggregatedData.getBoilerId());
 
           // check del guasto del bruciatore
-          case 3 -> sendAlarm(String.valueOf(AlarmType.GAS_FLAME_FAULT), aggregatedData.getBoilerId());
+          case GAS_FLAME_FAULT_VALUE -> sendAlarm(String.valueOf(AlarmType.GAS_FLAME_FAULT), aggregatedData.getBoilerId());
 
           // check del guasto della pressione dell'aria
-          case 4 -> sendAlarm(String.valueOf(AlarmType.AIR_PRESS_FAULT), aggregatedData.getBoilerId());
+          case AIR_PRESS_FAULT_VALUE -> sendAlarm(String.valueOf(AlarmType.AIR_PRESS_FAULT), aggregatedData.getBoilerId());
 
           // check della temperatura dell'acqua
-          case 5 -> sendAlarm(String.valueOf(AlarmType.WATER_OVERTEMP), aggregatedData.getBoilerId());
+          case WATER_OVERTEMP_VALUE -> sendAlarm(String.valueOf(AlarmType.WATER_OVERTEMP), aggregatedData.getBoilerId());
         }
       }
 
