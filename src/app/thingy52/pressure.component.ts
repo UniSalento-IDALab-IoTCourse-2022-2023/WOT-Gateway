@@ -4,6 +4,7 @@ import { BluetoothCore, BrowserWebBluetooth, ConsoleLoggerService } from '@manek
 import { of, Subscription } from 'rxjs';
 import { SmoothieChart, TimeSeries } from 'smoothie';
 import { BleService } from '../ble.service';
+import { RawdataService } from '../services/rawdata.service';
 
 export const bleCore = (b: BrowserWebBluetooth, l: ConsoleLoggerService) => new BluetoothCore(b, l);
 export const bleService = (b: BluetoothCore) => new BleService(b);
@@ -39,6 +40,7 @@ export class PressureComponent implements OnInit, OnDestroy {
   chart: SmoothieChart;
   valuesSubscription: Subscription;
   streamSubscription: Subscription;
+  value : number;
 
   @ViewChild('chart', { static: true })
   chartRef: ElementRef<HTMLCanvasElement>;
@@ -49,7 +51,9 @@ export class PressureComponent implements OnInit, OnDestroy {
 
   constructor(
     public service: BleService,
-    public snackBar: MatSnackBar) {
+    public snackBar: MatSnackBar,
+    private rawdataService: RawdataService
+    ) {
 
     service.config({
       decoder: (value: DataView) => value.getUint32(0,true),
@@ -91,6 +95,8 @@ export class PressureComponent implements OnInit, OnDestroy {
     console.log('Reading pressure %d', value);
     this.series.append(Date.now(), value);
     this.chart.start();
+    this.value = value;
+    this.updatePressureData(value);
   }
 
 
@@ -108,5 +114,10 @@ export class PressureComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.valuesSubscription.unsubscribe();
     this.streamSubscription.unsubscribe();
+  }
+
+  updatePressureData(value: number) {
+    // Update the carbon monoxide data in the service
+    this.rawdataService.updatePressureData(value);
   }
 }

@@ -73,8 +73,12 @@
     <mat-grid-tile colspan="1" rowspan="1">
       <mat-card class="dashboard-card">
         <mat-card-header>
-          <mat-card-title>
+          <mat-card-title class="dashboard-title">
             Yield percentage
+            <div *ngIf="yield.isAlert" class="alert-container">
+              <mat-icon class="alarm-icon" color="warn">warning_amber</mat-icon>
+              <h6 class="alert-text">Si prega di contattare l'assistenza</h6>
+            </div>          
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="menuYield" aria-label="Toggle menu">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -104,8 +108,12 @@
     <mat-grid-tile colspan="1" rowspan="1">
       <mat-card class="dashboard-card">
         <mat-card-header>
-          <mat-card-title>
-            Carbon monoxide ppm level
+          <mat-card-title class="dashboard-title">
+            Carbon Monoxide Level ppm
+            <div *ngIf="carbon.isAlert" class="alert-container">
+              <mat-icon class="alarm-icon" color="warn">warning_amber</mat-icon>
+              <h6 class="alert-text">Si prega di contattare l'assistenza</h6>
+            </div>   
             <button mat-icon-button class="more-button" [matMenuTriggerFor]="menuCarbon" aria-label="Toggle menu">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -119,7 +127,6 @@
                 Disconnect
               </button>
             </mat-menu>
-            <mat-icon class="alarm-icon" color="warn" *ngIf="carbon.isAlert">warning_amber</mat-icon>
           </mat-card-title>
           <mat-card-subtitle *ngIf="(carbon.device | async) as device">
             {{ device.name }}
@@ -127,6 +134,38 @@
         </mat-card-header>
         <mat-card-content class="dashboard-card-content">
           <ble-carbon #carbon></ble-carbon>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <!-- state-->
+
+    <mat-grid-tile colspan="1" rowspan="1">
+      <mat-card class="dashboard-card">
+        <mat-card-header>
+          <mat-card-title>
+            State
+            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menuState" aria-label="Toggle menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menuState="matMenu" xPosition="before">
+              <button mat-menu-item *ngIf="(state.device | async) === null" (click)="state.requestValue()">
+                <mat-icon>bluetooth_searching</mat-icon>
+                Connect
+              </button>
+              <button mat-menu-item *ngIf="(state.device | async)" (click)="state.disconnect()">
+                <mat-icon>bluetooth_disabled</mat-icon>
+                Disconnect
+              </button>
+            </mat-menu>
+            <mat-icon class="alarm-icon" color="warn" *ngIf="state.isAlert">warning_amber</mat-icon>
+          </mat-card-title>
+          <mat-card-subtitle *ngIf="(state.device | async) as device">
+            {{ device.name }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content">
+          <ble-state #state></ble-state>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

@@ -4,10 +4,10 @@ import { BluetoothCore, BrowserWebBluetooth, ConsoleLoggerService } from '@manek
 import { Subscription } from 'rxjs';
 import { SmoothieChart, TimeSeries } from 'smoothie';
 import { BleService } from '../ble.service';
+import { RawdataService } from '../services/rawdata.service';
 
 export const bleCore = (b: BrowserWebBluetooth, l: ConsoleLoggerService) => new BluetoothCore(b, l);
 export const bleService = (b: BluetoothCore) => new BleService(b);
-
 
 // make sure we get a singleton instance of each service
 const PROVIDERS = [{
@@ -50,7 +50,8 @@ export class CarbonComponent implements OnInit, OnDestroy {
 
   constructor(
     public service: BleService,
-    public snackBar: MatSnackBar) {
+    public snackBar: MatSnackBar,
+    private rawdataService: RawdataService) {
 
     service.config({
       decoder: (value: DataView) => value.getInt16(0, true),
@@ -103,6 +104,7 @@ export class CarbonComponent implements OnInit, OnDestroy {
     this.series.append(Date.now(), value);
     this.chart.start();
     this.isAlert = this.checkForAlert(value);
+    this.updateCarbonMonoxideData(value)
   }
 
   disconnect() {
@@ -122,7 +124,12 @@ export class CarbonComponent implements OnInit, OnDestroy {
   }
 
   checkForAlert(value: number): boolean {
-    return value > 10000;
+    return value > 1000;
+  }
+
+  updateCarbonMonoxideData(value: number) {
+    // Update the carbon monoxide data in the service
+    this.rawdataService.updateCarbonMonoxideData(value);
   }
 }
 

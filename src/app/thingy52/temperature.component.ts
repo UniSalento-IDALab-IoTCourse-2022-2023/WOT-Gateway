@@ -4,6 +4,7 @@ import { BluetoothCore, BrowserWebBluetooth, ConsoleLoggerService } from '@manek
 import { Subscription } from 'rxjs';
 import { SmoothieChart, TimeSeries } from 'smoothie';
 import { BleService } from '../ble.service';
+import { RawdataService } from '../services/rawdata.service';
 
 export const bleCore = (b: BrowserWebBluetooth, l: ConsoleLoggerService) => new BluetoothCore(b, l);
 export const bleService = (b: BluetoothCore) => new BleService(b);
@@ -39,6 +40,7 @@ export class TemperatureComponent implements OnInit, OnDestroy {
   chart: SmoothieChart;
   valuesSubscription: Subscription;
   streamSubscription: Subscription;
+  value : number;
 
   @ViewChild('chart', { static: true })
   chartRef: ElementRef<HTMLCanvasElement>;
@@ -49,7 +51,9 @@ export class TemperatureComponent implements OnInit, OnDestroy {
 
   constructor(
     public service: BleService,
-    public snackBar: MatSnackBar) {
+    public snackBar: MatSnackBar,
+    private rawdataService: RawdataService
+    ) {
 
     service.config({
       decoder: (value: DataView) => value.getInt16(0, true),
@@ -99,6 +103,8 @@ export class TemperatureComponent implements OnInit, OnDestroy {
     console.log('Reading temperature %d', value);
     this.series.append(Date.now(), value);
     this.chart.start();
+    this.value = value;
+    this.updateTemperatureData(value);
   }
 
   disconnect() {
@@ -116,6 +122,11 @@ export class TemperatureComponent implements OnInit, OnDestroy {
     this.valuesSubscription.unsubscribe();
     this.streamSubscription.unsubscribe();
   }
+
+  updateTemperatureData(data: number) {
+    this.rawdataService.updateTemperatureData(data);
+  }
+
 }
 
 

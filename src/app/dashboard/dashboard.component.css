@@ -32,7 +32,6 @@ section {
   text-align: center;
 }
 
-
 img {
   width: 32px;
   margin: 0 10px;
@@ -40,4 +39,24 @@ img {
 
 .mat-icon {
   margin: 0 10px 0 0;
+}
+
+.dashboard-title {
+  display: flex;
+  align-items: center;
+}
+
+.alert-container {
+  display: flex;
+  align-items: center;
+  margin-left: 8px; /* Adjust the margin as needed */
+}
+
+.alarm-icon {
+  margin-right: 4px; /* Adjust the margin as needed */
+}
+
+.alert-text {
+  margin: 0;
+  font-size: 14px; /* Adjust the font size as needed */
 }

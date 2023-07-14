@@ -24,6 +24,9 @@ import { TempComponent } from './raspberry/temp/temp.component';
 import { PressureComponent } from './thingy52/pressure.component';
 import { YieldComponent } from './thingy52/yield.component';
 import { CarbonComponent } from './thingy52/carbon.component';
+import { RawdataService } from './services/rawdata.service';
+import { HttpClientModule } from '@angular/common/http';
+import { StateComponent } from './thingy52/state-component';
 
 @NgModule({
   declarations: [
@@ -36,7 +39,8 @@ import { CarbonComponent } from './thingy52/carbon.component';
     StepCounterComponent,
     DashboardComponent,
     TempComponent,
-    CarbonComponent
+    CarbonComponent,
+    StateComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +58,11 @@ import { CarbonComponent } from './thingy52/carbon.component';
     MatProgressSpinnerModule,
     MatGridListModule,
     MatCardModule,
-    MatMenuModule
+    MatMenuModule,
+    HttpClientModule
+  ],
+  providers: [
+    RawdataService
   ],
   bootstrap: [AppComponent]
 })

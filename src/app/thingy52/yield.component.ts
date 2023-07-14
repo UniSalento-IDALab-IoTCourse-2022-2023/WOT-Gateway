@@ -4,10 +4,10 @@ import { BluetoothCore, BrowserWebBluetooth, ConsoleLoggerService } from '@manek
 import { Subscription } from 'rxjs';
 import { SmoothieChart, TimeSeries } from 'smoothie';
 import { BleService } from '../ble.service';
+import { RawdataService } from '../services/rawdata.service';
 
 export const bleCore = (b: BrowserWebBluetooth, l: ConsoleLoggerService) => new BluetoothCore(b, l);
 export const bleService = (b: BluetoothCore) => new BleService(b);
-
 
 // make sure we get a singleton instance of each service
 const PROVIDERS = [{
@@ -39,6 +39,8 @@ export class YieldComponent implements OnInit, OnDestroy {
   chart: SmoothieChart;
   valuesSubscription: Subscription;
   streamSubscription: Subscription;
+  value : number;
+  isAlert: boolean = false;
 
   @ViewChild('chart', { static: true })
   chartRef: ElementRef<HTMLCanvasElement>;
@@ -49,7 +51,8 @@ export class YieldComponent implements OnInit, OnDestroy {
 
   constructor(
     public service: BleService,
-    public snackBar: MatSnackBar) {
+    public snackBar: MatSnackBar,
+    private rawdataService: RawdataService) {
 
     service.config({
       decoder: (value: DataView) => value.getFloat32(0, true),
@@ -99,6 +102,8 @@ export class YieldComponent implements OnInit, OnDestroy {
     console.log('Reading yield %d', value);
     this.series.append(Date.now(), value);
     this.chart.start();
+    this.updatePerfomanceData(value);
+    this.isAlert = this.checkForAlert(value);
   }
 
   disconnect() {
@@ -116,6 +121,15 @@ export class YieldComponent implements OnInit, OnDestroy {
     this.valuesSubscription.unsubscribe();
     this.streamSubscription.unsubscribe();
   }
+
+  updatePerfomanceData(value: number) {
+    this.rawdataService.updatePerformanceData(value);
+  }
+
+  checkForAlert(value: number): boolean {
+    return value < 90;
+  }
+
 }
 
 
