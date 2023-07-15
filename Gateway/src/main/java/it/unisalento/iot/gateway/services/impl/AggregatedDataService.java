@@ -7,6 +7,7 @@ import it.unisalento.iot.gateway.repositories.IAggregatedDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public class AggregatedDataService implements IAggregatedDataServiceImpl {
     AggregatedData newAggregatedData = new AggregatedData();
 
     newAggregatedData.setBoilerId("64ab11356623471faa234a7a");
+    newAggregatedData.setDate(new Date());
 
     // effettuo la media dei valori di:
 
