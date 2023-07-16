@@ -42,7 +42,7 @@ public class BoilerService implements IBoilerServiceImpl {
   static final String boilerDataTopic = "boilerData-topic";
   static final String alarmTopic = "alarm-topic";
   static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-
+  
   @Override
   public void sendBoilerData() throws CannotSendRequestException {
 

@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -32,10 +33,13 @@ public class BoilerRestController {
      */
     @PostMapping(path="/saveRawData", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity <RawDataDTO> saveRawData(@RequestBody RawDataDTO rawDataDTO) {
+      Date date = new Date();
 
       RawData rawData = convertRawDataDTOtoRawData(rawDataDTO);
+      rawData.setDate(date);
       RawData saved = rawDataRepository.save(rawData);
       rawDataDTO.setId(saved.getId());
+      rawDataDTO.setDate(date);
 
       return new ResponseEntity<>(rawDataDTO, HttpStatus.ACCEPTED);
     }
