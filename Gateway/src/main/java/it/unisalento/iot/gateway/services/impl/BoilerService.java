@@ -32,7 +32,7 @@ public class BoilerService implements IBoilerServiceImpl {
   IRawDataRepository rawDataRepository;
 
   public static int PERFORMANCE_TOP_RANGE = 90;
-  public static int EMISSIONS_TOP_RANGE = 10000;
+  public static int EMISSIONS_TOP_RANGE = 1000;
   public static final int LOW_WATER_PRESS_VALUE = 2;
   public static final int GAS_FLAME_FAULT_VALUE = 3;
   public static final int AIR_PRESS_FAULT_VALUE = 4;
