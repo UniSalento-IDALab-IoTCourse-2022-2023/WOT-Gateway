@@ -28,3 +28,9 @@ I collegamenti con tutti i componenti del progetto sono:
 
 ## Descrizione del componente corrente
 Il componente corrente è il Gateway, il quale permetterà, una volta avviato tutto il sistema, di manipolare i dati che gli vengono trasmessi dal Raspberry. Ogni minuto il componente corrente andrà a prelevare tutti i dati che gli sono stati trasmetti, e che ha salvato in un database, per poterli aggregare ed avere una loro media ed identificare anche eventuali anomalie in essi. Una volta effettuata l'aggregazione dei dati questi saranno inviati all'applicativo in cloud tramite protocollo MQTT. Lo stesso trattamento è stato riservato per i messaggi di allarme.
+
+## Avvio del sistema
+Per effettuare l'avvio del sistema basterà avviare il container presente nella cartella Gateway (subito dopo avere avviato il [monitoring-be](https://github.com/UniSalento-IDALab-IoTCourse-2022-2023/WOT-monitoring-be):
+```
+$ docker-compose up
+```
