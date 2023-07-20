@@ -32,7 +32,24 @@ Il componente corrente è il Gateway, il quale permetterà, una volta avviato tu
 ![](./img%20readme/fe.png)
 
 ## Avvio del sistema
+### Backend
 Per effettuare l'avvio del sistema basterà avviare il container presente nella cartella Gateway (subito dopo avere avviato il [monitoring-be](https://github.com/UniSalento-IDALab-IoTCourse-2022-2023/WOT-monitoring-be):
 ```
 $ docker-compose up
 ```
+### Frontend
+1. Assicurati di avere Node.js installato sul tuo sistema. Se non lo hai già fatto, puoi scaricarlo e installarlo dal sito ufficiale di Node.js: **https://nodejs.org**.
+2. Apri il terminale o la riga di comando del tuo sistema operativo.
+3. Posizionati nella cartella principale del progetto dell'app Angular utilizzando il comando cd (change directory).
+     ```
+     cd WOT-monitoring-fe-AprileVadacca
+     ```
+4. Ora che sei all'interno della cartella del progetto, esegui il comando seguente per installare tutte le dipendenze necessarie elencate nel file **package.json**:
+     ```
+     npm install
+     ```
+5. Dopo aver completato l'installazione delle dipendenze, puoi avviare l'applicazione con il comando:
+     ```
+     ng serve
+     ```
+6. A questo punto, apri il tuo browser preferito e visita l'URL **http://localhost:4200/**. Dovresti visualizzare la tua app Angular in esecuzione!
